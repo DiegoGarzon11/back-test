@@ -1,0 +1,16 @@
+export type TransactionStatus = 'PENDING' | 'APPROVED' | 'DECLINED' | 'ERROR';
+
+export interface Transaction {
+  id: string;
+  status: TransactionStatus;
+  productId: string;
+  customerId: string;
+  deliveryId: string;
+  productAmount: number;
+  baseFee: number;
+  deliveryFee: number;
+  totalAmount: number;
+  wompiTransactionId: string | null;
+  wompiReference: string | null;
+  failureReason: string | null;
+}
