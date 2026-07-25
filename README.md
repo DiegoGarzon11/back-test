@@ -1,98 +1,198 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Checkout Payment API — Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API REST para el flujo de checkout de pago con tarjeta de crédito, con integración a Wompi (sandbox). Construida con **NestJS + TypeScript**, siguiendo **Arquitectura Hexagonal (Ports & Adapters)** y **Railway Oriented Programming (ROP)** en los casos de uso.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Stack
 
-## Description
+- **Framework:** NestJS
+- **Lenguaje:** TypeScript
+- **Base de datos:** PostgreSQL (Supabase)
+- **ORM:** Prisma
+- **Validación:** class-validator / class-transformer
+- **Testing:** Jest
+- **Documentación de API:** Swagger (OpenAPI)
+- **Pasarela de pago:** Wompi (sandbox)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Arquitectura
 
-## Project setup
+El proyecto sigue el patrón de **Arquitectura Hexagonal**: cada módulo de negocio (`products`, `customers`, `deliveries`, `transactions`) se organiza en 3 capas:
 
-```bash
-$ pnpm install
-```
+src/<módulo>/
+domain/ → Puertos (interfaces), sin dependencias de frameworks
+application/ → Casos de uso, dependen solo de los puertos
+infrastructure/ → Adapters concretos (Prisma, Wompi), controllers, DTOs
 
-## Compile and run the project
+El **dominio** nunca depende de infraestructura. Los casos de uso reciben sus dependencias (repositorios, gateway de pago) como interfaces inyectadas por token en el módulo de Nest — así la lógica de negocio no sabe que existen Prisma o Wompi.
+
+Los casos de uso retornan `Result<T, E>` en vez de lanzar excepciones para errores de negocio esperados (stock insuficiente, producto no encontrado, pago rechazado), siguiendo **Railway Oriented Programming**.
+
+## Instalación
 
 ```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
+pnpm install
 ```
 
-## Run tests
+## Variables de entorno
+
+Crea un archivo `.env` en la raíz con:
+
+DATABASE_URL="postgresql://usuario:password@host:5432/db"
+WOMPI_PUBLIC_KEY=pub_stagtest_xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+WOMPI_PRIVATE_KEY=prv_stagtest_xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+WOMPI_INTEGRITY_SECRET=stagtest_integrity_xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+FRONTEND_URL=http://localhost:5173
+PORT=3000
+
+## Base de datos
 
 ```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
+pnpm exec prisma generate
+pnpm exec prisma migrate dev
+pnpm run seed
 ```
 
-## Deployment
+El seed crea 3 productos de prueba.
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+## Correr el proyecto
 
 ```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
+pnpm start:dev
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+El servidor queda disponible en `http://localhost:3000`.
 
-## Resources
+## Documentación de la API (Swagger)
 
-Check out a few resources that may come in handy when working with NestJS:
+Con el servidor corriendo, la documentación interactiva está disponible en:
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+http://localhost:3000/api/docs
 
-## Support
+> En producción: `https://<tu-dominio-de-despliegue>/api/docs`
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## Endpoints principales
 
-## Stay in touch
+| Método | Endpoint            | Descripción                                                                                                |
+| ------ | ------------------- | ---------------------------------------------------------------------------------------------------------- |
+| GET    | `/products`         | Lista todos los productos con stock disponible                                                             |
+| POST   | `/customers`        | Crea o retorna un cliente existente (por email)                                                            |
+| POST   | `/deliveries`       | Crea una dirección de entrega                                                                              |
+| POST   | `/transactions`     | Procesa el pago completo: crea transacción PENDING, cobra con Wompi, actualiza resultado y descuenta stock |
+| GET    | `/transactions/:id` | Consulta el estado de una transacción                                                                      |
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Detalle completo de request/response de cada endpoint en Swagger.
 
-## License
+## Modelo de datos
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+```mermaid
+erDiagram
+    Product ||--o{ Transaction : "es comprado en"
+    Customer ||--o{ Delivery : "tiene"
+    Customer ||--o{ Transaction : "realiza"
+    Delivery ||--|| Transaction : "pertenece a"
+
+    Product {
+        string id PK
+        string name
+        string description
+        int price
+        int stock
+        string imageUrl
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    Customer {
+        string id PK
+        string email UK
+        string fullName
+        string phone
+        datetime createdAt
+    }
+
+    Delivery {
+        string id PK
+        string customerId FK
+        string address
+        string city
+        string region
+        string postalCode
+        datetime createdAt
+    }
+
+    Transaction {
+        string id PK
+        string status
+        string productId FK
+        string customerId FK
+        string deliveryId FK "unique"
+        int productAmount
+        int baseFee
+        int deliveryFee
+        int totalAmount
+        string wompiTransactionId
+        string wompiReference UK
+        string failureReason
+        datetime createdAt
+        datetime updatedAt
+    }
+```
+
+**Notas del modelo:**
+
+- Los montos (`price`, `productAmount`, `baseFee`, `deliveryFee`, `totalAmount`) se almacenan en **centavos**, siguiendo la convención de la API de Wompi (`amount_in_cents`).
+- `Transaction.status` es un enum: `PENDING | APPROVED | DECLINED | ERROR | VOIDED`.
+- `Delivery` tiene relación **1:1** con `Transaction` (`deliveryId` es único) — cada transacción tiene su propia dirección de entrega.
+- El descuento de stock es **atómico**: se usa una actualización condicional (`stock >= cantidad`) para evitar condiciones de carrera entre compras simultáneas.
+
+## Testing
+
+```bash
+pnpm test           # correr todos los tests
+pnpm run test:cov   # correr tests con reporte de cobertura
+```
+
+### Resultados de cobertura
+
+Test Suites: 10 passed, 10 total
+Tests: 22 passed, 22 total
+
+File % Stmts % Branch % Funcs % Lines
+All files 82.53 69.23 79.41 83.57
+customers/application 100 100 100 100
+deliveries/application 100 100 100 100
+products/application 100 100 100 100
+transactions/application 100 100 100 100
+customers/infrastructure 47.61 42.85 33.33 47.05
+deliveries/infrastructure 50 37.5 40 50
+products/infrastructure 100 75 100 100
+transactions/infrastructure 98.21 87.5 100 98
+shared 100 100 100 100
+
+> Cobertura total: **82.53%** de statements (supera el umbral requerido del 80%).
+>
+> Los repositorios de Prisma (`Prisma*Repository`) se excluyeron de la cobertura unitaria por ser adapters delgados sin lógica de negocio (wrappers directos sobre el cliente de Prisma); se validaron con pruebas de integración manuales contra la base de datos real (ver sección de pruebas manuales).
+
+Se testearon unitariamente, mockeando los puertos (repositorios/gateway de pago) para aislar la lógica de negocio:
+
+- Los 4 casos de uso principales (`ProcessPaymentUseCase`, `GetProductsUseCase`, `FindOrCreateCustomerUseCase`, `CreateDeliveryUseCase`), incluyendo casos límite: producto no encontrado, stock insuficiente, pago aprobado/rechazado, protección contra manipulación de montos.
+- Los 4 controllers.
+- El adapter de integración con Wompi (`WompiPaymentGatewayAdapter`), mockeando `fetch`: transacción aprobada, rechazada, y con polling por estado `PENDING`.
+
+## Flujo de pago (resumen del caso de uso `ProcessPaymentUseCase`)
+
+1. Valida que el producto exista y tenga stock disponible.
+2. Calcula el monto total usando el **precio real del producto en base de datos** (nunca confía en el monto enviado por el cliente).
+3. Crea la transacción en estado `PENDING`.
+4. Llama a Wompi: obtiene token de aceptación → tokeniza la tarjeta → genera firma de integridad → crea la transacción → hace polling hasta obtener un estado final.
+5. Actualiza la transacción con el resultado (`APPROVED` / `DECLINED` / `ERROR`).
+6. Si fue aprobado, descuenta el stock de forma atómica.
+
+## Tarjetas de prueba (Wompi Sandbox)
+
+| Número                | Resultado |
+| --------------------- | --------- |
+| `4242 4242 4242 4242` | APPROVED  |
+| `4111 1111 1111 1111` | DECLINED  |
+| Cualquier otra        | ERROR     |
+
+Fecha de expiración futura y CVC de 3 dígitos, cualquiera es válido.
