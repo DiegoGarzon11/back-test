@@ -1,6 +1,6 @@
 # Checkout Payment API — Backend
 
-API REST para el flujo de checkout de pago con tarjeta de crédito, con integración a Wompi (sandbox). Construida con **NestJS + TypeScript**, siguiendo **Arquitectura Hexagonal (Ports & Adapters)** y **Railway Oriented Programming (ROP)** en los casos de uso.
+API REST para el flujo de checkout de pago con tarjeta de crédito. Construida con **NestJS + TypeScript**, siguiendo **Arquitectura Hexagonal (Ports & Adapters)** y **Railway Oriented Programming (ROP)** en los casos de uso.
 
 ## Stack
 
@@ -11,7 +11,7 @@ API REST para el flujo de checkout de pago con tarjeta de crédito, con integrac
 - **Validación:** class-validator / class-transformer
 - **Testing:** Jest
 - **Documentación de API:** Swagger (OpenAPI)
-- **Pasarela de pago:** Wompi (sandbox)
+
 
 ## Arquitectura
 
@@ -20,9 +20,9 @@ El proyecto sigue el patrón de **Arquitectura Hexagonal**: cada módulo de nego
 src/<módulo>/
 domain/ → Puertos (interfaces), sin dependencias de frameworks
 application/ → Casos de uso, dependen solo de los puertos
-infrastructure/ → Adapters concretos (Prisma, Wompi), controllers, DTOs
+infrastructure/ → Adapters concretos (Prisma), controllers, DTOs
 
-El **dominio** nunca depende de infraestructura. Los casos de uso reciben sus dependencias (repositorios, gateway de pago) como interfaces inyectadas por token en el módulo de Nest — así la lógica de negocio no sabe que existen Prisma o Wompi.
+El **dominio** nunca depende de infraestructura. Los casos de uso reciben sus dependencias (repositorios, gateway de pago) como interfaces inyectadas por token en el módulo de Nest — así la lógica de negocio no sabe que existen Prisma.
 
 Los casos de uso retornan `Result<T, E>` en vez de lanzar excepciones para errores de negocio esperados (stock insuficiente, producto no encontrado, pago rechazado), siguiendo **Railway Oriented Programming**.
 
@@ -31,17 +31,6 @@ Los casos de uso retornan `Result<T, E>` en vez de lanzar excepciones para error
 ```bash
 pnpm install
 ```
-
-## Variables de entorno
-
-Crea un archivo `.env` en la raíz con:
-
-DATABASE_URL="postgresql://usuario:password@host:5432/db"
-WOMPI_PUBLIC_KEY=pub_stagtest_xxxxxxxxxxxxxxxxxxxxxxxxxxxx
-WOMPI_PRIVATE_KEY=prv_stagtest_xxxxxxxxxxxxxxxxxxxxxxxxxxxx
-WOMPI_INTEGRITY_SECRET=stagtest_integrity_xxxxxxxxxxxxxxxxxxxxxxxxxxxx
-FRONTEND_URL=http://localhost:5173
-PORT=3000
 
 ## Base de datos
 
@@ -76,7 +65,7 @@ http://localhost:3000/api/docs
 | GET    | `/products`         | Lista todos los productos con stock disponible                                                             |
 | POST   | `/customers`        | Crea o retorna un cliente existente (por email)                                                            |
 | POST   | `/deliveries`       | Crea una dirección de entrega                                                                              |
-| POST   | `/transactions`     | Procesa el pago completo: crea transacción PENDING, cobra con Wompi, actualiza resultado y descuenta stock |
+| POST   | `/transactions`     | Procesa el pago completo: crea transacción PENDING, cobra, actualiza resultado y descuenta stock |
 | GET    | `/transactions/:id` | Consulta el estado de una transacción                                                                      |
 
 Detalle completo de request/response de cada endpoint en Swagger.
@@ -139,7 +128,7 @@ erDiagram
 
 **Notas del modelo:**
 
-- Los montos (`price`, `productAmount`, `baseFee`, `deliveryFee`, `totalAmount`) se almacenan en **centavos**, siguiendo la convención de la API de Wompi (`amount_in_cents`).
+- Los montos (`price`, `productAmount`, `baseFee`, `deliveryFee`, `totalAmount`) se almacenan en **centavos** (`amount_in_cents`).
 - `Transaction.status` es un enum: `PENDING | APPROVED | DECLINED | ERROR | VOIDED`.
 - `Delivery` tiene relación **1:1** con `Transaction` (`deliveryId` es único) — cada transacción tiene su propia dirección de entrega.
 - El descuento de stock es **atómico**: se usa una actualización condicional (`stock >= cantidad`) para evitar condiciones de carrera entre compras simultáneas.
@@ -176,18 +165,17 @@ Se testearon unitariamente, mockeando los puertos (repositorios/gateway de pago)
 
 - Los 4 casos de uso principales (`ProcessPaymentUseCase`, `GetProductsUseCase`, `FindOrCreateCustomerUseCase`, `CreateDeliveryUseCase`), incluyendo casos límite: producto no encontrado, stock insuficiente, pago aprobado/rechazado, protección contra manipulación de montos.
 - Los 4 controllers.
-- El adapter de integración con Wompi (`WompiPaymentGatewayAdapter`), mockeando `fetch`: transacción aprobada, rechazada, y con polling por estado `PENDING`.
+- El adapter de integración  (`WompiPaymentGatewayAdapter`), mockeando `fetch`: transacción aprobada, rechazada, y con polling por estado `PENDING`.
 
 ## Flujo de pago (resumen del caso de uso `ProcessPaymentUseCase`)
 
 1. Valida que el producto exista y tenga stock disponible.
 2. Calcula el monto total usando el **precio real del producto en base de datos** (nunca confía en el monto enviado por el cliente).
 3. Crea la transacción en estado `PENDING`.
-4. Llama a Wompi: obtiene token de aceptación → tokeniza la tarjeta → genera firma de integridad → crea la transacción → hace polling hasta obtener un estado final.
-5. Actualiza la transacción con el resultado (`APPROVED` / `DECLINED` / `ERROR`).
-6. Si fue aprobado, descuenta el stock de forma atómica.
+4. Actualiza la transacción con el resultado (`APPROVED` / `DECLINED` / `ERROR`).
+5. Si fue aprobado, descuenta el stock de forma atómica.
 
-## Tarjetas de prueba (Wompi Sandbox)
+## Tarjetas de prueba
 
 | Número                | Resultado |
 | --------------------- | --------- |
