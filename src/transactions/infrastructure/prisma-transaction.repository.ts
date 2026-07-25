@@ -5,12 +5,12 @@ import type { TransactionRepository } from '../domain/transaction.js';
 
 type CreateTransactionData = Omit<
   Transaction,
-  'id' | 'wompiTransactionId' | 'wompiReference' | 'failureReason'
+  'id' | 'transactionId' | 'wompiReference' | 'failureReason'
 >;
 
 type UpdateTransactionResultData = {
   status: Transaction['status'];
-  wompiTransactionId?: string | null;
+  transactionId?: string | null;
   failureReason?: string | null;
 };
 
@@ -24,7 +24,7 @@ interface TransactionRecord {
   baseFee: number;
   deliveryFee: number;
   totalAmount: number;
-  wompiTransactionId: string | null;
+  transactionId: string | null;
   wompiReference: string | null;
   failureReason: string | null;
 }
@@ -76,7 +76,7 @@ export class PrismaTransactionRepository implements TransactionRepository {
       baseFee: transaction.baseFee,
       deliveryFee: transaction.deliveryFee,
       totalAmount: transaction.totalAmount,
-      wompiTransactionId: transaction.wompiTransactionId,
+      transactionId: transaction.transactionId,
       wompiReference: transaction.wompiReference,
       failureReason: transaction.failureReason,
     };

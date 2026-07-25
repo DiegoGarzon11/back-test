@@ -27,7 +27,7 @@ async function bootstrap() {
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Checkout Payment API')
     .setDescription(
-      'API para checkout de pago con tarjeta de crédito (integración Wompi sandbox)',
+      'API para checkout de pago con tarjeta de crédito',
     )
     .setVersion('1.0')
     .build();

@@ -37,9 +37,9 @@ pnpm install
 Crea un archivo `.env` en la raíz con:
 
 DATABASE_URL="postgresql://usuario:password@host:5432/db"
-WOMPI_PUBLIC_KEY=pub_stagtest_xxxxxxxxxxxxxxxxxxxxxxxxxxxx
-WOMPI_PRIVATE_KEY=prv_stagtest_xxxxxxxxxxxxxxxxxxxxxxxxxxxx
-WOMPI_INTEGRITY_SECRET=stagtest_integrity_xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+PAYMENT_GATEWAY_PUBLIC_KEY=pub_stagtest_xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+PAYMENT_KEY=prv_stagtest_xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+INTEGRITY_SECRET=stagtest_integrity_xxxxxxxxxxxxxxxxxxxxxxxxxxxx
 FRONTEND_URL=http://localhost:5173
 PORT=3000
 

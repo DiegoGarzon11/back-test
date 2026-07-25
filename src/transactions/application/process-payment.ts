@@ -71,7 +71,7 @@ export class ProcessPaymentUseCase {
       pendingTransaction.id,
       {
         status: chargeResult.status,
-        wompiTransactionId: chargeResult.gatewayTransactionId,
+        transactionId: chargeResult.gatewayTransactionId,
         failureReason: chargeResult.failureReason,
       },
     );

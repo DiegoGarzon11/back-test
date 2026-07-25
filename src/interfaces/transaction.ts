@@ -10,7 +10,7 @@ export interface Transaction {
   baseFee: number;
   deliveryFee: number;
   totalAmount: number;
-  wompiTransactionId: string | null;
+  transactionId: string | null;
   wompiReference: string | null;
   failureReason: string | null;
 }

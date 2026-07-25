@@ -16,9 +16,9 @@ describe('WompiPaymentGatewayAdapter', () => {
   let fetchMock: jest.Mock;
 
   beforeEach(() => {
-    process.env.WOMPI_PUBLIC_KEY = 'pub_test_key';
-    process.env.WOMPI_PRIVATE_KEY = 'prv_test_key';
-    process.env.WOMPI_INTEGRITY_SECRET = 'integrity_test_secret';
+    process.env.PAYMENT_GATEWAY_PUBLIC_KEY = 'pub_test_key';
+    process.env.PAYMENT_KEY = 'prv_test_key';
+    process.env.INTEGRITY_SECRET = 'integrity_test_secret';
 
     fetchMock = jest.fn();
     global.fetch = fetchMock as unknown as typeof fetch;

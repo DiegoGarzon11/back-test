@@ -40,7 +40,7 @@ describe('ProcessPaymentUseCase', () => {
     baseFee: 500000,
     deliveryFee: 800000,
     totalAmount: 26300000,
-    wompiTransactionId: null,
+    transactionId: null,
     wompiReference: null,
     failureReason: null,
   };

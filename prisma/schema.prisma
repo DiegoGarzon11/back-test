@@ -59,7 +59,7 @@ model Transaction {
   deliveryFee   Int
   totalAmount   Int
 
-  wompiTransactionId String?
+  transactionId String?
   wompiReference     String? @unique
   failureReason      String?
 

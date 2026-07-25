@@ -6,10 +6,10 @@ import type {
   PaymentGateway,
 } from '../domain/payment-gateway.js';
 
-const WOMPI_SANDBOX_URL = process.env.UAT_SANDBOX_URL!;
-const PUBLIC_KEY = process.env.WOMPI_PUBLIC_KEY!;
-const PRIVATE_KEY = process.env.WOMPI_PRIVATE_KEY!;
-const INTEGRITY_SECRET = process.env.WOMPI_INTEGRITY_SECRET!;
+const WOMPI_SANDBOX_URL = process.env.S_URL!;
+const PUBLIC_KEY = process.env.PAYMENT_GATEWAY_PUBLIC_KEY!;
+const PRIVATE_KEY = process.env.PAYMENT_KEY!;
+const INTEGRITY_SECRET = process.env.INTEGRITY_SECRET!;
 
 @Injectable()
 export class WompiPaymentGatewayAdapter implements PaymentGateway {

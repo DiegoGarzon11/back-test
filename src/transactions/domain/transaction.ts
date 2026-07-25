@@ -4,14 +4,14 @@ export interface TransactionRepository {
   create(
     data: Omit<
       Transaction,
-      'id' | 'wompiTransactionId' | 'wompiReference' | 'failureReason'
+      'id' | 'transactionId' | 'wompiReference' | 'failureReason'
     >,
   ): Promise<Transaction>;
   updateResult(
     id: string,
     data: {
       status: Transaction['status'];
-      wompiTransactionId?: string | null;
+      transactionId?: string | null;
       failureReason?: string | null;
     },
   ): Promise<Transaction>;
