@@ -6,13 +6,13 @@ import type {
   PaymentGateway,
 } from '../domain/payment-gateway.js';
 
-const WOMPI_SANDBOX_URL = process.env.S_URL!;
+const PRUEBA_URL = process.env.S_URL!;
 const PUBLIC_KEY = process.env.PAYMENT_GATEWAY_PUBLIC_KEY!;
 const PRIVATE_KEY = process.env.PAYMENT_KEY!;
 const INTEGRITY_SECRET = process.env.INTEGRITY_SECRET!;
 
 @Injectable()
-export class WompiPaymentGatewayAdapter implements PaymentGateway {
+export class paymentGatewayAdapter implements PaymentGateway {
   async chargeCard(input: ChargeCardInput): Promise<ChargeCardResult> {
     const acceptanceToken = await this.getAcceptanceToken();
     const cardToken = await this.tokenizeCard(input);
@@ -33,7 +33,7 @@ export class WompiPaymentGatewayAdapter implements PaymentGateway {
   }
 
   private async getAcceptanceToken(): Promise<string> {
-    const res = await fetch(`${WOMPI_SANDBOX_URL}/merchants/${PUBLIC_KEY}`);
+    const res = await fetch(`${PRUEBA_URL}/merchants/${PUBLIC_KEY}`);
     const body = (await res.json()) as {
       data: { presigned_acceptance: { acceptance_token: string } };
     };
@@ -41,7 +41,7 @@ export class WompiPaymentGatewayAdapter implements PaymentGateway {
   }
 
   private async tokenizeCard(input: ChargeCardInput): Promise<string> {
-    const res = await fetch(`${WOMPI_SANDBOX_URL}/tokens/cards`, {
+    const res = await fetch(`${PRUEBA_URL}/tokens/cards`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -76,7 +76,7 @@ export class WompiPaymentGatewayAdapter implements PaymentGateway {
   }): Promise<{ id: string; status: string }> {
     const { acceptanceToken, cardToken, signature, input } = params;
 
-    const res = await fetch(`${WOMPI_SANDBOX_URL}/transactions`, {
+    const res = await fetch(`${PRUEBA_URL}/transactions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -107,10 +107,9 @@ export class WompiPaymentGatewayAdapter implements PaymentGateway {
     const delayMs = 2000;
 
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
-      const res = await fetch(
-        `${WOMPI_SANDBOX_URL}/transactions/${transactionId}`,
-        { headers: { Authorization: `Bearer ${PRIVATE_KEY}` } },
-      );
+      const res = await fetch(`${PRUEBA_URL}/transactions/${transactionId}`, {
+        headers: { Authorization: `Bearer ${PRIVATE_KEY}` },
+      });
       const body = (await res.json()) as {
         data: { status: string; status_message: string | null };
       };
@@ -129,7 +128,7 @@ export class WompiPaymentGatewayAdapter implements PaymentGateway {
     return {
       status: 'ERROR',
       gatewayTransactionId: transactionId,
-      failureReason: 'Timeout esperando confirmación de Wompi',
+      failureReason: 'Timeout esperando confirmación...',
     };
   }
 }

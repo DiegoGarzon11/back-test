@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Product {
@@ -60,8 +61,8 @@ model Transaction {
   totalAmount   Int
 
   transactionId String?
-  wompiReference     String? @unique
-  failureReason      String?
+  reference     String? @unique
+  failureReason String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

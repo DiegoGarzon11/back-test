@@ -51,7 +51,7 @@ CREATE TABLE "Transaction" (
     "deliveryFee" INTEGER NOT NULL,
     "totalAmount" INTEGER NOT NULL,
     "wompiTransactionId" TEXT,
-    "wompiReference" TEXT,
+    "reference" TEXT,
     "failureReason" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -66,7 +66,7 @@ CREATE UNIQUE INDEX "Customer_email_key" ON "Customer"("email");
 CREATE UNIQUE INDEX "Transaction_deliveryId_key" ON "Transaction"("deliveryId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Transaction_wompiReference_key" ON "Transaction"("wompiReference");
+CREATE UNIQUE INDEX "Transaction_reference_key" ON "Transaction"("reference");
 
 -- AddForeignKey
 ALTER TABLE "Delivery" ADD CONSTRAINT "Delivery_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES "Customer"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

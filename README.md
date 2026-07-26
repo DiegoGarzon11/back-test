@@ -119,7 +119,7 @@ erDiagram
         int deliveryFee
         int totalAmount
         string transactionId
-        string wompiReference UK
+        string reference UK
         string failureReason
         datetime createdAt
         datetime updatedAt
@@ -165,7 +165,7 @@ Se testearon unitariamente, mockeando los puertos (repositorios/gateway de pago)
 
 - Los 4 casos de uso principales (`ProcessPaymentUseCase`, `GetProductsUseCase`, `FindOrCreateCustomerUseCase`, `CreateDeliveryUseCase`), incluyendo casos límite: producto no encontrado, stock insuficiente, pago aprobado/rechazado, protección contra manipulación de montos.
 - Los 4 controllers.
-- El adapter de integración  (`WompiPaymentGatewayAdapter`), mockeando `fetch`: transacción aprobada, rechazada, y con polling por estado `PENDING`.
+- El adapter de integración  (`paymentGatewayAdapter`), mockeando `fetch`: transacción aprobada, rechazada, y con polling por estado `PENDING`.
 
 ## Flujo de pago (resumen del caso de uso `ProcessPaymentUseCase`)
 

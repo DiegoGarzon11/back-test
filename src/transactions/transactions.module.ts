@@ -3,7 +3,7 @@ import { PrismaService } from '../shared/prisma.service.js';
 import { ProductsModule } from '../products/product.module.js';
 import { TransactionController } from './infrastructure/transaction.controller.js';
 import { PrismaTransactionRepository } from './infrastructure/prisma-transaction.repository.js';
-import { WompiPaymentGatewayAdapter } from './infrastructure/wompi-payment-gateway.adapter.js';
+import { paymentGatewayAdapter } from './infrastructure/payment-gateway.adapter.js';
 import { ProcessPaymentUseCase } from './application/process-payment.js';
 
 @Module({
@@ -18,7 +18,7 @@ import { ProcessPaymentUseCase } from './application/process-payment.js';
     },
     {
       provide: 'PaymentGateway',
-      useClass: WompiPaymentGatewayAdapter,
+      useClass: paymentGatewayAdapter,
     },
   ],
 })

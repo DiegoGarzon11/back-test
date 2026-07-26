@@ -16,8 +16,8 @@ describe('TransactionController', () => {
     baseFee: 500000,
     deliveryFee: 800000,
     totalAmount: 26300000,
-    transactionId: 'wompi-tx-1',
-    wompiReference: null,
+    transactionId: 'tx-1',
+    reference: null,
     failureReason: null,
   };
 

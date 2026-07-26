@@ -5,7 +5,7 @@ import type { TransactionRepository } from '../domain/transaction.js';
 
 type CreateTransactionData = Omit<
   Transaction,
-  'id' | 'transactionId' | 'wompiReference' | 'failureReason'
+  'id' | 'transactionId' | 'reference' | 'failureReason'
 >;
 
 type UpdateTransactionResultData = {
@@ -25,7 +25,7 @@ interface TransactionRecord {
   deliveryFee: number;
   totalAmount: number;
   transactionId: string | null;
-  wompiReference: string | null;
+  reference: string | null;
   failureReason: string | null;
 }
 
@@ -77,7 +77,7 @@ export class PrismaTransactionRepository implements TransactionRepository {
       deliveryFee: transaction.deliveryFee,
       totalAmount: transaction.totalAmount,
       transactionId: transaction.transactionId,
-      wompiReference: transaction.wompiReference,
+      reference: transaction.reference,
       failureReason: transaction.failureReason,
     };
   }

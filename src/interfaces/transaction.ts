@@ -11,6 +11,6 @@ export interface Transaction {
   deliveryFee: number;
   totalAmount: number;
   transactionId: string | null;
-  wompiReference: string | null;
+  reference: string | null;
   failureReason: string | null;
 }

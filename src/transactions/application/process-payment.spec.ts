@@ -1,4 +1,3 @@
-
 import { ProcessPaymentUseCase } from './process-payment.js';
 import type { ProductRepository } from '../../products/domain/product.js';
 import type { TransactionRepository } from '../domain/transaction.js';
@@ -41,7 +40,7 @@ describe('ProcessPaymentUseCase', () => {
     deliveryFee: 800000,
     totalAmount: 26300000,
     transactionId: null,
-    wompiReference: null,
+    reference: null,
     failureReason: null,
   };
 
@@ -71,7 +70,7 @@ describe('ProcessPaymentUseCase', () => {
     const paymentGateway: PaymentGateway = {
       chargeCard: jest.fn().mockResolvedValue({
         status: 'APPROVED',
-        gatewayTransactionId: 'wompi-tx-1',
+        gatewayTransactionId: 'tx-1',
         failureReason: null,
       }),
       ...overrides?.paymentGateway,
@@ -123,7 +122,7 @@ describe('ProcessPaymentUseCase', () => {
       paymentGateway: {
         chargeCard: jest.fn().mockResolvedValue({
           status: 'DECLINED',
-          gatewayTransactionId: 'wompi-tx-2',
+          gatewayTransactionId: 'tx-2',
           failureReason: 'Fondos insuficientes',
         }),
       },

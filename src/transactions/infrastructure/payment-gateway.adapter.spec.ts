@@ -1,6 +1,6 @@
-import { WompiPaymentGatewayAdapter } from './wompi-payment-gateway.adapter.js';
+import { paymentGatewayAdapter } from './payment-gateway.adapter.js';
 
-describe('WompiPaymentGatewayAdapter', () => {
+describe('paymentGatewayAdapter', () => {
   const chargeInput = {
     amountInCents: 26300000,
     currency: 'COP',
@@ -28,7 +28,7 @@ describe('WompiPaymentGatewayAdapter', () => {
     jest.restoreAllMocks();
   });
 
-  it('retorna APPROVED cuando Wompi confirma la transacción como aprobada', async () => {
+  it('retorna APPROVED cuando  confirma la transacción como aprobada', async () => {
     fetchMock
       // 1. getAcceptanceToken
       .mockResolvedValueOnce({
@@ -46,7 +46,7 @@ describe('WompiPaymentGatewayAdapter', () => {
       // 3. createTransaction
       .mockResolvedValueOnce({
         json: () =>
-          Promise.resolve({ data: { id: 'wompi-tx-1', status: 'APPROVED' } }),
+          Promise.resolve({ data: { id: 'tx-1', status: 'APPROVED' } }),
       })
       // 4. pollUntilFinalStatus
       .mockResolvedValueOnce({
@@ -56,15 +56,15 @@ describe('WompiPaymentGatewayAdapter', () => {
           }),
       });
 
-    const adapter = new WompiPaymentGatewayAdapter();
+    const adapter = new paymentGatewayAdapter();
     const result = await adapter.chargeCard(chargeInput);
 
     expect(result.status).toBe('APPROVED');
-    expect(result.gatewayTransactionId).toBe('wompi-tx-1');
+    expect(result.gatewayTransactionId).toBe('tx-1');
     expect(fetchMock).toHaveBeenCalledTimes(4);
   });
 
-  it('retorna DECLINED cuando Wompi rechaza la transacción', async () => {
+  it('retorna DECLINED cuando rechaza la transacción', async () => {
     fetchMock
       .mockResolvedValueOnce({
         json: () =>
@@ -79,7 +79,7 @@ describe('WompiPaymentGatewayAdapter', () => {
       })
       .mockResolvedValueOnce({
         json: () =>
-          Promise.resolve({ data: { id: 'wompi-tx-2', status: 'DECLINED' } }),
+          Promise.resolve({ data: { id: 'tx-2', status: 'DECLINED' } }),
       })
       .mockResolvedValueOnce({
         json: () =>
@@ -91,7 +91,7 @@ describe('WompiPaymentGatewayAdapter', () => {
           }),
       });
 
-    const adapter = new WompiPaymentGatewayAdapter();
+    const adapter = new paymentGatewayAdapter();
     const result = await adapter.chargeCard(chargeInput);
 
     expect(result.status).toBe('DECLINED');
@@ -112,7 +112,7 @@ describe('WompiPaymentGatewayAdapter', () => {
       })
       .mockResolvedValueOnce({
         json: () =>
-          Promise.resolve({ data: { id: 'wompi-tx-3', status: 'PENDING' } }),
+          Promise.resolve({ data: { id: 'tx-3', status: 'PENDING' } }),
       })
       .mockResolvedValueOnce({
         json: () =>
@@ -127,7 +127,7 @@ describe('WompiPaymentGatewayAdapter', () => {
           }),
       });
 
-    const adapter = new WompiPaymentGatewayAdapter();
+    const adapter = new paymentGatewayAdapter();
     const result = await adapter.chargeCard(chargeInput);
 
     expect(result.status).toBe('APPROVED');
