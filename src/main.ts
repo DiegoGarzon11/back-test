@@ -1,5 +1,3 @@
-// src/main.ts
-
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
@@ -26,9 +24,7 @@ async function bootstrap() {
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Checkout Payment API')
-    .setDescription(
-      'API para checkout de pago con tarjeta de crédito',
-    )
+    .setDescription('API para checkout de pago con tarjeta de crédito')
     .setVersion('1.0')
     .build();
 

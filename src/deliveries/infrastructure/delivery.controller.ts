@@ -1,5 +1,3 @@
-// src/deliveries/infrastructure/delivery.controller.ts
-
 import { Body, Controller, Post } from '@nestjs/common';
 import { CreateDeliveryUseCase } from '../application/create-delivery.js';
 import { CreateDeliveryDto } from './create-delivery.dto.js';

@@ -1,5 +1,3 @@
-// src/transactions/infrastructure/process-payment.dto.ts
-
 import {
   IsEmail,
   IsInt,

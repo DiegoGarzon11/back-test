@@ -30,7 +30,6 @@ describe('paymentGatewayAdapter', () => {
 
   it('retorna APPROVED cuando  confirma la transacción como aprobada', async () => {
     fetchMock
-      // 1. getAcceptanceToken
       .mockResolvedValueOnce({
         json: () =>
           Promise.resolve({
@@ -39,16 +38,13 @@ describe('paymentGatewayAdapter', () => {
             },
           }),
       })
-      // 2. tokenizeCard
       .mockResolvedValueOnce({
         json: () => Promise.resolve({ data: { id: 'tok_test_123' } }),
       })
-      // 3. createTransaction
       .mockResolvedValueOnce({
         json: () =>
           Promise.resolve({ data: { id: 'tx-1', status: 'APPROVED' } }),
       })
-      // 4. pollUntilFinalStatus
       .mockResolvedValueOnce({
         json: () =>
           Promise.resolve({
